@@ -6,8 +6,8 @@ import { db } from "./data/guitarras"
 
 function App(){
 
-  const cartInStorage = localStorage.getItem('cart')
-  const initialCart = cartInStorage ? JSON.parse(cartInStorage) : []
+    const cartInStorage = localStorage.getItem('cart')
+    const initialCart = cartInStorage ? JSON.parse(cartInStorage) : []
     const [ guitars  ] = useState(db)
     const  [ cart, setCart ] = useState(initialCart)
 
