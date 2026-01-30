@@ -117,4 +117,4 @@ export default function Header({cart ,removeGuitar, addOne, clearCart, subsOne, 
       </header>
     </>
   );
-}
+}s
