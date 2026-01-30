@@ -1,100 +1,73 @@
-import Footer from "./components/Footer"
-import { useEffect, useState } from "react"
-import Guitar from "./components/Guitar"
-import Header from "./components/Header"
-import { db } from "./data/guitarras"
+import { useState } from "react";
+import Guitar from "./components/Guitar";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { db } from "./data/guitarras";
 
-function App(){
+function App() {
+const [guitars] = useState(db);
+const [cart, setCart] = useState([]);
 
-    const cartInStorage = localStorage.getItem('cart')
-    const initialCart = cartInStorage ? JSON.parse(cartInStorage) : []
-    const [ guitars  ] = useState(db)
-    const  [ cart, setCart ] = useState(initialCart)
+  // Agregar guitarra
+const addGuitar = (guitar) => {
+    const itemExists = cart.findIndex((item) => item.id === guitar.id);
 
-    const addGuitar = (guitar) => {
-    console.log('Recibe Guitar', guitar.nombre)
-    const idExists = cart.findIndex(g => g.id === guitar.id)
-    if(idExists === -1){  
-        const newCart = [...cart,{
-        ...guitar,
-        cantidad: 1
-        }]
-        setCart(newCart)
+    if (itemExists === -1) {
+    setCart([...cart, { ...guitar, cantidad: 1 }]);
     } else {
-      const newCart = [...cart] /* ... son para los arrays y objetos */
-        newCart[idExists].cantidad++  
-        setCart(newCart)  
+    const updatedCart = cart.map((item) =>
+        item.id === guitar.id ? { ...item, cantidad: item.cantidad + 1 } : item,
+    );
+    setCart(updatedCart);
     }
-}
+};
 
-const removeGuitar =(id)=> {
-    const newCart = cart.filter(g => g.id !== id)
-    setCart(newCart)
-}
+  // Eliminar guitarra
+const removeGuitar = (id) => {
+    setCart(cart.filter((item) => item.id !== id));
+};
 
-const addOne = id => {
-    const idxGuitar =cart.findIndex(g => g.id === id)
-    const newCart = [...cart]
-    if (idxGuitar === -1) {
-        console.log('No existe la guitarra')
-    } else {
-        newCart[idxGuitar].cantidad++
-        setCart(newCart)
-    }
-}
+  // Aumentar cantidad
+const increaseQuantity = (id) => {
+    const updatedCart = cart.map((item) =>
+      item.id === id ? { ...item, cantidad: item.cantidad + 1 } : item,
+    );
+    setCart(updatedCart);
+  };
 
+  // Disminuir cantidad
+  const decreaseQuantity = (id) => {
+    const updatedCart = cart.map((item) =>
+      item.id === id && item.cantidad > 1
+        ? { ...item, cantidad: item.cantidad - 1 }
+        : item,
+    );
+    setCart(updatedCart);
+  };
 
-const subsOne = id => {
-    const idxGuitar =cart.findIndex(g => g.id === id)
-    const newCart = [...cart]
-    if (newCart[idxGuitar].cantidad === 1) {
-        removeGuitar(id)
-    } else {
-        newCart[idxGuitar].cantidad--
-        setCart(newCart)
-    }
-    
-
-}   
-
-
-const clearCart = () =>{
-    setCart([])
-}
-
-useEffect(() => {
-  localStorage.setItem('cart', JSON.stringify(cart))
-}, [cart])
-
-    return (
+  return (
     <>
-    <Header
-    cart={cart}
-    removeGuitar={removeGuitar}
-    addOne={addOne}
-    clearCart={clearCart}
-    subsOne={subsOne}
-    guitar = { guitars [3]}
-    addGuitar={addGuitar}
-    >
-    </Header> 
-    
-    <main className="container-xl mt-5">
+      <Header
+        cart={cart}
+        addGuitar={addGuitar}
+        removeGuitar={removeGuitar}
+        increaseQuantity={increaseQuantity}
+        decreaseQuantity={decreaseQuantity}
+      />
+
+      <main className="container-xl mt-5">
         <h2 className="text-center">Nuestra Colección</h2>
+
         <div className="row mt-5">
-        {
-            guitars.map(guitar => <Guitar 
-                                key={guitar.id}
-                                addGuitar={addGuitar}
-                                guitar={guitar}
-                                />)
-        }
+          {guitars.map((guitar) => (
+            <Guitar key={guitar.id} guitar={guitar} addGuitar={addGuitar} />
+          ))}
         </div>
-    </main>
-<Footer></Footer>
+      </main>
+
+      <Footer />
     </>
-    )
+  );
+}
 
-
-
-}export default App
+export default App;

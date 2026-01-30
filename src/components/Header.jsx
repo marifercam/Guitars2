@@ -1,14 +1,23 @@
-// import { useMemo } from "react";
+import { useMemo } from "react";
 
-export default function Header({cart ,removeGuitar, addOne, clearCart, subsOne, guitar, addGuitar}) {
-  /*Estado derivado */
+export default function Header({
+  cart,
+  addGuitar,
+  removeGuitar,
+  increaseQuantity,
+  decreaseQuantity,
+}) {
+  // Guitarra del HERO
+  const heroGuitar = {
+    id: 1,
+    nombre: "Modelo VAI",
+    precio: 399,
+    imagen: "guitarra_01",
+  };
 
-  // // const total = useMemo(()=> {
-  //   return cart.reduce((t, g)=> t + g.cantidad * g.precio, 0)
-  // },[cart])
-
-
-
+  const total = useMemo(() => {
+    return cart.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  }, [cart]);
 
   return (
     <>
@@ -34,10 +43,9 @@ export default function Header({cart ,removeGuitar, addOne, clearCart, subsOne, 
 
                 <div id="carrito" className="bg-white p-3">
                   {cart.length === 0 ? (
-                    <p className="text-center">El carrito esta vacio</p>
+                    <p className="text-center">El carrito está vacío</p>
                   ) : (
                     <>
-                      <p className="text-center fw-bold">Carrito de Compras</p>
                       <table className="w-100 table">
                         <thead>
                           <tr>
@@ -48,42 +56,56 @@ export default function Header({cart ,removeGuitar, addOne, clearCart, subsOne, 
                             <th></th>
                           </tr>
                         </thead>
+
                         <tbody>
-                          {cart.map((guitar) => (
-                            <tr key={guitar.id}>
+                          {cart.map((item) => (
+                            <tr key={item.id}>
                               <td>
                                 <img
                                   className="img-fluid"
-                                  src={`/img/${guitar.imagen}.jpg`}
-                                  alt="imagen guitarra"
+                                  src={`/img/${item.imagen}.jpg`}
+                                  alt="guitarra"
                                 />
                               </td>
-                              <td>{guitar.nombre}</td>
-                              <td className="fw-bold">${guitar.precio}</td>
-                              <td className="flex align-items-start gap-4">
-                                <button onClick={() => subsOne(guitar.id)} type="button" className="btn btn-dark">
+
+                              <td>{item.nombre}</td>
+
+                              <td className="fw-bold">${item.precio}</td>
+
+                              <td className="d-flex gap-2 align-items-center">
+                                <button
+                                  className="btn btn-dark"
+                                  onClick={() => decreaseQuantity(item.id)}
+                                >
                                   -
                                 </button>
-                                {guitar.cantidad}
-                                <button onClick={() => addOne(guitar.id)} type="button" className="btn btn-dark">
+
+                                {item.cantidad}
+
+                                <button
+                                  className="btn btn-dark"
+                                  onClick={() => increaseQuantity(item.id)}
+                                >
                                   +
                                 </button>
                               </td>
+
                               <td>
-                                <button onClick={() => removeGuitar(guitar.id)} className="btn btn-danger" type="button">
-                                  x
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => removeGuitar(item.id)}
+                                >
+                                  X
                                 </button>
                               </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
+
                       <p className="text-end">
-                        Total pagar: <span className="fw-bold">${cart.reduce((total, guitar) => total + guitar.precio * guitar.cantidad, 0)}</span>
+                        Total pagar: <span className="fw-bold">${total}</span>
                       </p>
-                      <button onClick={clearCart} className="btn btn-dark w-100 mt-3 p-2">
-                        Vaciar Carrito
-                      </button>
                     </>
                   )}
                 </div>
@@ -91,17 +113,21 @@ export default function Header({cart ,removeGuitar, addOne, clearCart, subsOne, 
             </nav>
           </div>
 
+          {/* HERO (NO SE TOCA EL DISEÑO) */}
           <div className="row mt-5">
             <div className="col-md-6 text-center text-md-start pt-5">
-              <h1 className="display-2 fw-bold">Modelo {guitar.nombre}</h1>
+              <h1 className="display-2 fw-bold">Modelo VAI</h1>
+
               <p className="mt-5 fs-5 text-white">
-                {guitar.descripcion}
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
               </p>
-              <p className="text-primary fs-1 fw-black">${guitar.precio}</p>
+
+              <p className="text-primary fs-1 fw-black">$399</p>
+
               <button
-                onClick={() => addGuitar(guitar)}
                 type="button"
                 className="btn fs-4 bg-primary text-white py-2 px-5"
+                onClick={() => addGuitar(heroGuitar)}
               >
                 Agregar al Carrito
               </button>
@@ -112,9 +138,9 @@ export default function Header({cart ,removeGuitar, addOne, clearCart, subsOne, 
         <img
           className="header-guitarra"
           src="/img/header_guitarra.png"
-          alt="imagen header"
+          alt="guitarra"
         />
       </header>
     </>
   );
-}s
+}
